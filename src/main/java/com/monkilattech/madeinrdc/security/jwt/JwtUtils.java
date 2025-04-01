@@ -1,105 +1,104 @@
-// package com.monkilattech.madeinrdc.security.jwt;
+package com.monkilattech.madeinrdc.security.jwt;
 
-// import java.security.Key;
-// import java.util.Date;
+import java.security.Key;
+import java.util.Date;
 
-// import jakarta.servlet.http.Cookie;
-// import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
-// import org.springframework.beans.factory.annotation.Value;
-// import org.springframework.http.ResponseCookie;
-// import org.springframework.stereotype.Component;
-// import org.springframework.web.util.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
 
-// import com.monkilatech.propertymanagement.security.services.UserDetailsImpl;
-// import com.monkilatech.propertymanagement.utils.RessourceName;
+import com.monkilattech.madeinrdc.security.services.UserDetailsImpl;
 
-// import io.jsonwebtoken.*;
-// import io.jsonwebtoken.io.Decoders;
-// import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
-// @Component
-// public class JwtUtils {
-//     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+@Component
+public class JwtUtils {
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-//     @Value("${jwtSecret}")
-//     private String jwtSecret;
+    @Value("${jwtSecret}")
+    private String jwtSecret;
 
-//     @Value(RessourceName.jwtExpirationMs)
-//     private int jwtExpirationMs;
+    @Value(RessourceName.jwtExpirationMs)
+    private int jwtExpirationMs;
 
-//     @Value("${jwtCookie}")
-//     private String jwtCookie;
+    @Value("${jwtCookie}")
+    private String jwtCookie;
 
-//     public String getJwtFromCookies(HttpServletRequest request) {
+    public String getJwtFromCookies(HttpServletRequest request) {
 
-//         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-//         if (cookie != null) {
-//             return cookie.getValue();
-//         } else {
-//             return null;
-//         }
-//     }
+        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+        if (cookie != null) {
+            return cookie.getValue();
+        } else {
+            return null;
+        }
+    }
 
-//     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-//         String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+    public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
+        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
 
-//         ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api/auth").maxAge(24 * 60 * 60)
-//                 .httpOnly(true)
-//                 .build();
-//         return cookie;
-//     }
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api/auth").maxAge(24 * 60 * 60)
+                .httpOnly(true)
+                .build();
+        return cookie;
+    }
 
-//     // public ResponseCookie generateJwtCookieWithUsername(String username) {
-//     // String jwt = generateTokenFromUsername(username);
+    // public ResponseCookie generateJwtCookieWithUsername(String username) {
+    // String jwt = generateTokenFromUsername(username);
 
-//     // ResponseCookie cookie = ResponseCookie.from(jwtCookie,
-//     // jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true)
-//     // .build();
-//     // return cookie;
-//     // }
+    // ResponseCookie cookie = ResponseCookie.from(jwtCookie,
+    // jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true)
+    // .build();
+    // return cookie;
+    // }
 
-//     public ResponseCookie getCleanJwtCookie() {
+    public ResponseCookie getCleanJwtCookie() {
 
-//         ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api/auth").build();
-//         return cookie;
-//     }
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api/auth").build();
+        return cookie;
+    }
 
-//     public String getUserNameFromJwtToken(String token) {
-//         return Jwts.parserBuilder().setSigningKey(key()).build()
-//                 .parseClaimsJws(token).getBody().getSubject();
-//     }
+    public String getUserNameFromJwtToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody().getSubject();
+    }
 
-//     private Key key() {
-//         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-//     }
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
 
-//     public boolean validateJwtToken(String authToken) {
-//         try {
-//             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
-//             return true;
-//         } catch (MalformedJwtException e) {
-//             logger.error("Invalid JWT token: {}", e.getMessage());
-//         } catch (ExpiredJwtException e) {
-//             logger.error("JWT token is expired: {}", e.getMessage());
-//         } catch (UnsupportedJwtException e) {
-//             logger.error("JWT token is unsupported: {}", e.getMessage());
-//         } catch (IllegalArgumentException e) {
-//             logger.error("JWT claims string is empty: {}", e.getMessage());
-//         }
+    public boolean validateJwtToken(String authToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
+            return true;
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+        }
 
-//         return false;
-//     }
+        return false;
+    }
 
-//     public String generateTokenFromUsername(String username) {
-//         return Jwts.builder()
-//                 .setSubject(username)
-//                 .setIssuedAt(new Date())
-//                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-//                 .signWith(key(), SignatureAlgorithm.HS256)
-//                 .compact();
-//     }
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
-// }
+}

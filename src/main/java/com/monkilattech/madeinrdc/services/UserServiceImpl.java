@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userDB.setStatus(user.getStatus());
-        userDB.setRole(user.getRole());
+        userDB.setRoles(user.getRoles());
 
         return userRepository.save(userDB);
     }
