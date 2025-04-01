@@ -1,6 +1,7 @@
 package com.monkilattech.madeinrdc.models;
 
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -21,11 +22,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
     private double price;
     private String description;
+    private List<String> urls;
     
     @ManyToOne
     @JoinColumn(name = "seller_id")
@@ -34,4 +36,5 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    private String createdAt;
 }

@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrderDetail {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private int quantity;
     private double totalPrice;
