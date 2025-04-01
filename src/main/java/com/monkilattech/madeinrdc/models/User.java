@@ -26,6 +26,9 @@ public class User {
     private String email;
     private String password;
     private String role; 
+    private String profil;
+    private String phone;
+    private Boolean status;
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<Product> products;
