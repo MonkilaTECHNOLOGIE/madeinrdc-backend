@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String paymentMethod;
     private double amount;

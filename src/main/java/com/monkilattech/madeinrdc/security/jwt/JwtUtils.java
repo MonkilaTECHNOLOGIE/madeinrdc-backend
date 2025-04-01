@@ -26,7 +26,7 @@ public class JwtUtils {
     @Value("${jwtSecret}")
     private String jwtSecret;
 
-    @Value("${jwtSecret}")
+    @Value("${jwtExpirationMs}")
     private int jwtExpirationMs;
 
     @Value("${jwtCookie}")
