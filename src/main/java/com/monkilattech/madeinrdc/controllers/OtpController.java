@@ -1,31 +1,45 @@
 package com.monkilattech.madeinrdc.controllers;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.PhoneAuthProvider;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/auth")
 public class OtpController {
 
+   private static final String FIREBASE_API_KEY = "VOTRE_FIREBASE_API_KEY";
+    private static final String SEND_OTP_URL = "https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key=" + FIREBASE_API_KEY;
+    private static final String VERIFY_OTP_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPhoneNumber?key=" + FIREBASE_API_KEY;
+
     @PostMapping("/sendOtp")
     public String sendOtp(@RequestParam String phoneNumber) {
-        try {
-            String verificationId = PhoneAuthProvider.verifyPhoneNumber(phoneNumber);
-            return "OTP envoyé, ID: " + verificationId;
-        } catch (Exception e) {
-            return "Erreur lors de l’envoi de l’OTP: " + e.getMessage();
-        }
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, String> request = new HashMap<>();
+        request.put("phoneNumber", phoneNumber);
+        // request.put("recaptchaToken", "YOUR_RECAPTCHA_TOKEN");  // Optionnel
+
+        @SuppressWarnings("rawtypes")
+        ResponseEntity<Map> response = restTemplate.postForEntity(SEND_OTP_URL, request, Map.class);
+        return response.getBody().get("sessionInfo").toString(); 
     }
 
     @PostMapping("/verifyOtp")
-    public String verifyOtp(@RequestParam String otp, @RequestParam String verificationId) {
-        try {
-            String uid = FirebaseAuth.getInstance().verifyIdToken(otp).getUid();
-            return "Authentification réussie, UID: " + uid;
-        } catch (FirebaseAuthException e) {
-            return "Erreur de vérification: " + e.getMessage();
+    public String verifyOtp(@RequestParam String sessionInfo, @RequestParam String otp) {
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, String> request = new HashMap<>();
+        request.put("sessionInfo", sessionInfo);
+        request.put("code", otp);
+
+        @SuppressWarnings("rawtypes")
+        ResponseEntity<Map> response = restTemplate.postForEntity(VERIFY_OTP_URL, request, Map.class);
+        if (response.getBody().containsKey("idToken")) {
+            return "Authentification réussie, Token: " + response.getBody().get("idToken");
+        } else {
+            return "Erreur d'authentification";
         }
     }
 }
