@@ -3,6 +3,7 @@ package com.monkilattech.madeinrdc.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -11,7 +12,9 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/auth")
 public class OtpController {
 
-   private static final String FIREBASE_API_KEY = "VOTRE_FIREBASE_API_KEY";
+    @Value("${apikey-firebase}")
+    private static String FIREBASE_API_KEY;
+    
     private static final String SEND_OTP_URL = "https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key=" + FIREBASE_API_KEY;
     private static final String VERIFY_OTP_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPhoneNumber?key=" + FIREBASE_API_KEY;
 
