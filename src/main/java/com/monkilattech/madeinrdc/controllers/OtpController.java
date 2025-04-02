@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("api/auth")
 public class OtpController {
 
     @Value("${apikey-firebase}")
