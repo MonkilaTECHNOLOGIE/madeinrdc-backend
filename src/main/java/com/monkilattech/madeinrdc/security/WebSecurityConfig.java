@@ -30,7 +30,8 @@ public class WebSecurityConfig {
 
     private static final String[] PUBLIC_URLS = {
         "/api/auth/**",
-        "/actuator/**"
+        "/actuator/**",
+        "/api/auth/sendOtp",
     };
 
     private final UserDetailsServiceImpl userDetailsService;
