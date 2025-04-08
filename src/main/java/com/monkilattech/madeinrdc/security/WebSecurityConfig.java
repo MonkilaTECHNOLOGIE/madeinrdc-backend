@@ -1,6 +1,8 @@
 package com.monkilattech.madeinrdc.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.monkilattech.madeinrdc.security.jwt.AuthEntryPointJwt;
+import com.monkilattech.madeinrdc.security.jwt.AuthTokenFilter;
+import com.monkilattech.madeinrdc.security.services.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,21 +17,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.monkilattech.madeinrdc.security.jwt.AuthEntryPointJwt;
-import com.monkilattech.madeinrdc.security.jwt.AuthTokenFilter;
-import com.monkilattech.madeinrdc.security.services.UserDetailsServiceImpl;
-
-
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private AuthEntryPointJwt authEntryPointJwt;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final AuthEntryPointJwt authEntryPointJwt;
+
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt authEntryPointJwt) {
+        this.userDetailsService = userDetailsService;
+        this.authEntryPointJwt = authEntryPointJwt;
+    }
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -39,10 +38,8 @@ public class WebSecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
 
@@ -56,24 +53,20 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @SuppressWarnings({ "deprecation", "removal" })
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .exceptionHandling(handling -> handling
-                        .authenticationEntryPoint(authEntryPointJwt))
-                .sessionManagement(management -> management
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests(requests -> requests
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/actuator").permitAll()
-                        .anyRequest()
-                        .authenticated());
+            .csrf(csrf -> csrf.disable())
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/api/auth/**", "/actuator").permitAll()
+                .anyRequest().authenticated()
+            );
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
-
 }
