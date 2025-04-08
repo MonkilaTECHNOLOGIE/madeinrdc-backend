@@ -1,14 +1,19 @@
 package com.monkilattech.madeinrdc.controllers;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +25,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.monkilattech.madeinrdc.models.ERole;
+import com.monkilattech.madeinrdc.models.Role;
+import com.monkilattech.madeinrdc.models.User;
 import com.monkilattech.madeinrdc.payload.request.CheckUserRequest;
 import com.monkilattech.madeinrdc.payload.request.LoginRequest;
+import com.monkilattech.madeinrdc.payload.response.StatusResponse;
 import com.monkilattech.madeinrdc.repository.UserRepository;
 import com.monkilattech.madeinrdc.security.jwt.JwtUtils;
 import com.monkilattech.madeinrdc.security.services.UserDetailsImpl;
@@ -84,11 +92,11 @@ public class AuthController {
 
         statusResponse.setStatus(200);
         statusResponse.setMessage("Authentification reussie");
-        statusResponse.setData(new UserInfoResponse(userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                userDetails.getStatus(),
-                roles, jwtCookie.getValue(), userDetails.getProfil(), userDetails.getPhone()));
+        // statusResponse.setData(new UserInfoResponse(userDetails.getId(),
+        //         userDetails.getUsername(),
+        //         userDetails.getEmail(),
+        //         userDetails.getStatus(),
+        //         roles, jwtCookie.getValue(), userDetails.getProfil(), userDetails.getPhone()));
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(statusResponse);
