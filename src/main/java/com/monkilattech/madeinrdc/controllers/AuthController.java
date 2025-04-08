@@ -30,6 +30,7 @@ import com.monkilattech.madeinrdc.models.User;
 import com.monkilattech.madeinrdc.payload.request.CheckUserRequest;
 import com.monkilattech.madeinrdc.payload.request.LoginRequest;
 import com.monkilattech.madeinrdc.payload.response.StatusResponse;
+import com.monkilattech.madeinrdc.repository.RoleRepository;
 import com.monkilattech.madeinrdc.repository.UserRepository;
 import com.monkilattech.madeinrdc.security.jwt.JwtUtils;
 import com.monkilattech.madeinrdc.security.services.UserDetailsImpl;
@@ -178,22 +179,16 @@ public class AuthController {
                         roles.add(adminRole);
 
                         break;
-                    case "client":
-                        Role clientRole = roleRepository.findByName(ERole.ROLE_CLIENT)
+                    case "buyer":
+                        Role clientRole = roleRepository.findByName(ERole.ROLE_BUYER)
                                 .orElseThrow(() -> new RuntimeException("Le rôle n'est pas trouvé"));
                         roles.add(clientRole);
 
                         break;
-                    case "bailleur":
-                        Role bailleurRole = roleRepository.findByName(ERole.ROLE_BAILLEUR)
+                    case "seller":
+                        Role bailleurRole = roleRepository.findByName(ERole.ROLE_SELLER)
                                 .orElseThrow(() -> new RuntimeException("Le rôle n'est pas trouvé"));
                         roles.add(bailleurRole);
-
-                        break;
-                    case "commissionnaire":
-                        Role commissionRole = roleRepository.findByName(ERole.ROLE_COMMISSION)
-                                .orElseThrow(() -> new RuntimeException("Le rôle n'est pas trouvé"));
-                        roles.add(commissionRole);
 
                         break;
                     default:
