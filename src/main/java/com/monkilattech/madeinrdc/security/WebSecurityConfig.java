@@ -19,8 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
+
+    private static final String[] PUBLIC_URLS = {
+        "/api/auth/**",
+        "/actuator/**"
+    };
 
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt authEntryPointJwt;
@@ -32,7 +37,7 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+        return new AuthTokenFilter(userDetailsService); 
     }
 
     @Bean
@@ -56,11 +61,12 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.disable()) // Ou `.configurationSource(...)` si CORS frontend
             .csrf(csrf -> csrf.disable())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/**", "/actuator").permitAll()
+                .requestMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
             );
 
