@@ -3,6 +3,7 @@ package com.monkilattech.madeinrdc.controllers;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import com.monkilattech.madeinrdc.repository.UserRepository;
 import com.monkilattech.madeinrdc.security.jwt.JwtUtils;
 import com.monkilattech.madeinrdc.security.services.UserDetailsImpl;
 import com.monkilattech.madeinrdc.services.UserService;
+import com.monkilattech.madeinrdc.utils.ValueException;
 
 @RestController
 @RequestMapping("api/auth")
@@ -262,7 +264,7 @@ public class AuthController {
     @SuppressWarnings("rawtypes")
     @PutMapping("/user/{userId}/{password}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT') or hasRole('USER') or hasRole('BAILLEUR')")
-    public ResponseEntity updatePassword(@PathVariable("userId") Long id, @PathVariable("password") String password) {
+    public ResponseEntity updatePassword(@PathVariable("userId") UUID id, @PathVariable("password") String password) {
 
         StatusResponse statusResponse = new StatusResponse();
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -295,7 +297,7 @@ public class AuthController {
     @SuppressWarnings("rawtypes")
     @DeleteMapping("/user/{userId}")
     // @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity delete(@PathVariable("userId") Long userId) {
+    public ResponseEntity delete(@PathVariable("userId") UUID userId) {
 
         StatusResponse statusResponse = new StatusResponse();
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -350,7 +352,7 @@ public class AuthController {
     @SuppressWarnings("rawtypes")
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT') or hasRole('USER') or hasRole('BAILLEUR')")
-    public ResponseEntity getUserById(@PathVariable("userId") Long userId) {
+    public ResponseEntity getUserById(@PathVariable("userId") UUID userId) {
 
         StatusResponse statusResponse = new StatusResponse();
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
