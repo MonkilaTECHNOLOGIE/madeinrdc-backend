@@ -99,8 +99,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body(statusResponse);
         }
 
-        int otp = otpService.generateOTP(loginRequest.getUsername());
-        otpService.sendOtp(loginRequest.getUsername(), Integer.toString(otp));
+        // int otp = otpService.generateOTP(loginRequest.getUsername());
+        // otpService.sendOtp(loginRequest.getUsername(), Integer.toString(otp));
 
         statusResponse.setStatus(200);
         statusResponse.setMessage("Authentification reussie");

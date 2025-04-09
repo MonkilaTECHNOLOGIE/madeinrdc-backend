@@ -58,6 +58,34 @@ public class OtpController {
     }
 
     
+    @SuppressWarnings("rawtypes")
+    @GetMapping("/generateOtp")
+    public ResponseEntity generateOTP(SendMailRequest sendMailRequest)
+            throws ValueException {
+
+        StatusResponse statusResponse = new StatusResponse();
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        try {
+            int otp = otpService.generateOTP(sendMailRequest.getPhone());
+            if (otp > 0) {
+                
+                otpService.sendOtp(sendMailRequest.getEmail(), Integer.toString(otp));
+
+                statusResponse.setStatus(200);
+                statusResponse.setMessage("Success");
+                statusResponse.setData(otp);
+                return ResponseEntity.status(HttpStatus.OK).body(statusResponse);
+            } else
+                statusResponse.setMessage("Erreur de generation de l'OTP");
+
+        } catch (Exception e) {
+            statusResponse.setStatus(400);
+            statusResponse.setMessage("Erreur interne");
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(httpStatus).body(statusResponse);
+    }
 
     @SuppressWarnings("rawtypes")
     @GetMapping("/validateOtp")
@@ -68,7 +96,7 @@ public class OtpController {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
         try {
-            int otpGet = otpService.getOtp(sendMailRequest.getPhone());
+            int otpGet = otpService.getOtp(sendMailRequest.getEmail());
             if (otpGet == sendMailRequest.getOtpCode()) {
                 otpService.clearOTP(sendMailRequest.getPhone());
                 statusResponse.setStatus(200);
