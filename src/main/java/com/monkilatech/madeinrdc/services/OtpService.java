@@ -54,33 +54,36 @@ public class OtpService {
         otpCache.invalidate(key);
     }
 
-    // public String generateOtp() {
-    //     int otp = 100000 + new java.util.Random().nextInt(900000);
-    //     return String.valueOf(otp);
-    // }
-
     public void sendOtp(String toEmail, String otp) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-            helper.setTo(toEmail);
-            helper.setSubject("Votre code de vérification OTP");
-
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+    
             helper.setFrom("providermail30@gmail.com", "MadeInDRC");
-
-            String body = "<p>Bonjour,</p>"
-                    + "<p>Voici votre code de vérification :</p>"
-                    + "<h2 style='color:blue;'>" + otp + "</h2>"
-                    + "<p>Ce code est valide pendant 10 minutes.</p>"
-                    + "<br><p><strong>MadeInDRC</strong></p>";
-
+            helper.setTo(toEmail);
+            helper.setSubject("Code de vérification - MadeInDRC");
+    
+            
+            String body = "<!DOCTYPE html>"
+                    + "<html><body style='font-family:Arial,sans-serif;'>"
+                    + "<p>Bonjour,</p>"
+                    + "<p>Vous avez demandé un code de vérification. Voici votre code :</p>"
+                    + "<p style='font-size:20px; font-weight:bold; color:#2F80ED;'>" + otp + "</p>"
+                    + "<p>Ce code est valable pendant <strong>10 minutes</strong>.</p>"
+                    + "<br><p>Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer ce message.</p>"
+                    + "<hr>"
+                    + "<p style='font-size:12px;color:gray;'>MadeInDRC - Plateforme numérique de confiance</p>"
+                    + "</body></html>";
+    
             helper.setText(body, true);
-
+    
+            message.addHeader("List-Unsubscribe", "<mailto:providermail30@gmail.com>");
+    
             mailSender.send(message);
-
+    
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
+    
 }

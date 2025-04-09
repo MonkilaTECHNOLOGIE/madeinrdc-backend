@@ -35,6 +35,8 @@ public class WebSecurityConfig {
         "/api/auth/signin",
         "/api/auth/signup",
         "/api/auth/signout",
+        "/api/auth/generateOtp",
+        "/api/auth/validateOtp",
     };
 
     private final UserDetailsServiceImpl userDetailsService;

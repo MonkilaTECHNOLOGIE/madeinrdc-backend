@@ -60,14 +60,14 @@ public class OtpController {
     
     @SuppressWarnings("rawtypes")
     @GetMapping("/generateOtp")
-    public ResponseEntity generateOTP(SendMailRequest sendMailRequest)
+    public ResponseEntity generateOTP(@RequestBody SendMailRequest sendMailRequest)
             throws ValueException {
 
         StatusResponse statusResponse = new StatusResponse();
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
         try {
-            int otp = otpService.generateOTP(sendMailRequest.getPhone());
+            int otp = otpService.generateOTP(sendMailRequest.getEmail());
             if (otp > 0) {
                 
                 otpService.sendOtp(sendMailRequest.getEmail(), Integer.toString(otp));
@@ -89,7 +89,7 @@ public class OtpController {
 
     @SuppressWarnings("rawtypes")
     @GetMapping("/validateOtp")
-    public ResponseEntity validateOTP(SendMailRequest sendMailRequest)
+    public ResponseEntity validateOTP(@RequestBody SendMailRequest sendMailRequest)
             throws ValueException {
 
         StatusResponse statusResponse = new StatusResponse();
@@ -98,7 +98,7 @@ public class OtpController {
         try {
             int otpGet = otpService.getOtp(sendMailRequest.getEmail());
             if (otpGet == sendMailRequest.getOtpCode()) {
-                otpService.clearOTP(sendMailRequest.getPhone());
+                otpService.clearOTP(sendMailRequest.getEmail());
                 statusResponse.setStatus(200);
                 statusResponse.setMessage("OTP Valide");
                 return ResponseEntity.status(HttpStatus.OK).body(statusResponse);
