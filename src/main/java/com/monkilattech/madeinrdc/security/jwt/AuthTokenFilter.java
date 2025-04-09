@@ -36,21 +36,21 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                         //     filterChain.doFilter(request, response);
                                         //     return;
                                         // }
-        // try {
-        //     String jwt = parseJwt(request);
-        //     if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-        //         String username = jwtUtils.getUserNameFromJwtToken(jwt);
-        //         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        try {
+            String jwt = parseJwt(request);
+            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        //         UsernamePasswordAuthenticationToken authentication =
-        //                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-        //         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        //         SecurityContextHolder.getContext().setAuthentication(authentication);
-        //     }
-        // } catch (Exception e) {
-        //     logger.error("Cannot set user authentication: {}", e.getMessage());
-        // }
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (Exception e) {
+            logger.error("Cannot set user authentication: {}", e.getMessage());
+        }
 
         filterChain.doFilter(request, response);
     }
