@@ -3,6 +3,7 @@ package com.monkilattech.madeinrdc.config;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -25,8 +26,18 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
+
     @Override
     public void run(String... args) {
+
+
+        if (activeProfile.equals("dev") || activeProfile.equals("test")) {
+            userRepository.deleteAll();
+            roleRepository.deleteAll();
+        }
+
         insererRoleSiNonExistant(ERole.ROLE_ADMIN);
         insererRoleSiNonExistant(ERole.ROLE_BUYER);
         insererRoleSiNonExistant(ERole.ROLE_SELLER);
@@ -37,6 +48,7 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void insererRoleSiNonExistant(ERole nom) {
+        roleRepository.deleteAll();
         Optional<Role> roleExistant = roleRepository.findByName(nom);
         if (roleExistant.isEmpty()) {
             Role role = new Role();
@@ -44,7 +56,7 @@ public class DataLoader implements CommandLineRunner {
             roleRepository.save(role);
             System.out.println("Role inséré : " + nom);
         } else {
-            System.out.println("Role déjà existant : " + nom);
+            System.err.println("Role déjà existant : " + nom);
         }
     }
 
@@ -57,6 +69,8 @@ public class DataLoader implements CommandLineRunner {
             admin.setUsername(username);
             admin.setEmail(email);
             admin.setPassword(passwordEncoder.encode("405522")); 
+            admin.setStatus(true);
+            admin.setPhone("+243816717846");
 
             Role roleAdmin = roleRepository.findByName(ERole.ROLE_ADMIN)
                     .orElseThrow(() -> new RuntimeException("ROLE_ADMIN non trouvé"));
@@ -66,7 +80,7 @@ public class DataLoader implements CommandLineRunner {
 
             System.out.println("Utilisateur admin créé avec succès !");
         } else {
-            System.out.println("Admin déjà existant.");
+            System.err.println("Admin déjà existant.");
         }
     }
 }
