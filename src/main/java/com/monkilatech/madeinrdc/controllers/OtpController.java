@@ -3,14 +3,25 @@ package com.monkilatech.madeinrdc.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import com.monkilatech.madeinrdc.payload.request.SendMailRequest;
+import com.monkilatech.madeinrdc.payload.response.StatusResponse;
+import com.monkilatech.madeinrdc.services.OtpService;
+import com.monkilatech.madeinrdc.utils.ValueException;
+
 @RestController
 @RequestMapping("/api/auth")
 public class OtpController {
+
+
+    @Autowired
+    public OtpService otpService;
 
     @Value("${apikey-firebase}")
     private static String FIREBASE_API_KEY;
@@ -44,5 +55,33 @@ public class OtpController {
         } else {
             return "Erreur d'authentification";
         }
+    }
+
+    
+
+    @SuppressWarnings("rawtypes")
+    @GetMapping("/validateOtp")
+    public ResponseEntity validateOTP(SendMailRequest sendMailRequest)
+            throws ValueException {
+
+        StatusResponse statusResponse = new StatusResponse();
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        try {
+            int otpGet = otpService.getOtp(sendMailRequest.getPhone());
+            if (otpGet == sendMailRequest.getOtpCode()) {
+                otpService.clearOTP(sendMailRequest.getPhone());
+                statusResponse.setStatus(200);
+                statusResponse.setMessage("OTP Valide");
+                return ResponseEntity.status(HttpStatus.OK).body(statusResponse);
+            } else
+                statusResponse.setMessage("OTP invalide");
+
+        } catch (Exception e) {
+            statusResponse.setStatus(400);
+            statusResponse.setMessage("Erreur interne");
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(httpStatus).body(statusResponse);
     }
 }
