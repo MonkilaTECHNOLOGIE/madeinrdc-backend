@@ -48,4 +48,14 @@ public class User {
     
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL)
     private List<Order> orders;
+
+
+    public User(String username, String email, String password, Boolean status, String profil, String phone) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.status = status;
+        this.profil = profil;
+        this.phone = phone;
+    }
 }

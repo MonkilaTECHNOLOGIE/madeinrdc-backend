@@ -30,7 +30,9 @@ import com.monkilattech.madeinrdc.models.Role;
 import com.monkilattech.madeinrdc.models.User;
 import com.monkilattech.madeinrdc.payload.request.CheckUserRequest;
 import com.monkilattech.madeinrdc.payload.request.LoginRequest;
+import com.monkilattech.madeinrdc.payload.request.RegisterRequest;
 import com.monkilattech.madeinrdc.payload.response.StatusResponse;
+import com.monkilattech.madeinrdc.payload.response.UserInfoResponse;
 import com.monkilattech.madeinrdc.repository.RoleRepository;
 import com.monkilattech.madeinrdc.repository.UserRepository;
 import com.monkilattech.madeinrdc.security.jwt.JwtUtils;
@@ -85,8 +87,8 @@ public class AuthController {
         }
 
         if (userDetails.getStatus() == false) {
-            String message = "Ce compte est desactivé";
-            message.replace("é", "e");
+            String message = "Ce compte est desactive";
+            message.replace("e", "é");
 
             statusResponse.setStatus(400);
             statusResponse.setMessage(message);
@@ -95,11 +97,11 @@ public class AuthController {
 
         statusResponse.setStatus(200);
         statusResponse.setMessage("Authentification reussie");
-        // statusResponse.setData(new UserInfoResponse(userDetails.getId(),
-        //         userDetails.getUsername(),
-        //         userDetails.getEmail(),
-        //         userDetails.getStatus(),
-        //         roles, jwtCookie.getValue(), userDetails.getProfil(), userDetails.getPhone()));
+        statusResponse.setData(new UserInfoResponse(userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                userDetails.getStatus(),
+                roles, jwtCookie.getValue(), userDetails.getProfil(), userDetails.getPhone()));
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(statusResponse);
@@ -113,8 +115,8 @@ public class AuthController {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
         if (userRepository.existsByUsername(checkUserRequest.getUsername())) {
-            String message = "est déjà utilisé";
-            message.replace("é", "e");
+            String message = "est déjà utilise";
+            message.replace("e", "é");
 
             statusResponse.setStatus(400);
             statusResponse.setMessage(checkUserRequest.getUsername() + message);
@@ -122,8 +124,8 @@ public class AuthController {
         }
 
         if (userRepository.findByPhone(checkUserRequest.getPhone()) != null) {
-            String message = "est déjà utilisé";
-            message.replace("é", "e");
+            String message = "est déjà utilise";
+            message.replace("e", "é");
 
             statusResponse.setStatus(400);
             statusResponse.setMessage(checkUserRequest.getPhone() + message);
@@ -137,17 +139,17 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(RegisterRequest signUpRequest) {
 
         @SuppressWarnings("rawtypes")
         StatusResponse statusResponse = new StatusResponse();
 
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            String message = "est déjà utilisé ";
-            message.replace("é", "e");
+        if (userRepository.existsByUsername(signUpRequest.getName())) {
+            String message = "est déjà utilise";
+            message.replace("e", "é");
 
             statusResponse.setStatus(400);
-            statusResponse.setMessage(signUpRequest.getUsername() + message);
+            statusResponse.setMessage(signUpRequest.getName() + message);
             return ResponseEntity.badRequest().body(statusResponse);
         }
 
@@ -160,10 +162,11 @@ public class AuthController {
         // return ResponseEntity.badRequest().body(statusResponse);
         // }
 
-        User user = new User(signUpRequest.getUsername(),
+        User user = new User(signUpRequest.getName(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()), signUpRequest.getStatus(), signUpRequest.getProfil(),
                 signUpRequest.getPhone());
+
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -204,8 +207,8 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        String message = "Enregistrement effectué";
-        message.replace("é", "e");
+        String message = "Enregistrement effectue";
+        message.replace("e", "é");
 
         statusResponse.setStatus(200);
         statusResponse.setMessage(message);
@@ -219,8 +222,8 @@ public class AuthController {
         @SuppressWarnings("rawtypes")
         StatusResponse statusResponse = new StatusResponse();
 
-        String message = "Vous avez été déconnecté !";
-        message.replace("é", "e");
+        String message = "Vous avez été déconnecte !";
+        message.replace("e", "é");
 
         statusResponse.setStatus(200);
         statusResponse.setMessage("Vous avez été déconnecté !");
@@ -230,7 +233,7 @@ public class AuthController {
 
     @SuppressWarnings("rawtypes")
     @PutMapping("/user")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT') or hasRole('USER') or hasRole('BAILLEUR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER') or hasRole('USER') or hasRole('BUYER')")
     public ResponseEntity update(User user) {
 
         StatusResponse statusResponse = new StatusResponse();
@@ -263,7 +266,7 @@ public class AuthController {
 
     @SuppressWarnings("rawtypes")
     @PutMapping("/user/{userId}/{password}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT') or hasRole('USER') or hasRole('BAILLEUR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER') or hasRole('USER') or hasRole('BUYER')")
     public ResponseEntity updatePassword(@PathVariable("userId") UUID id, @PathVariable("password") String password) {
 
         StatusResponse statusResponse = new StatusResponse();
@@ -351,7 +354,7 @@ public class AuthController {
 
     @SuppressWarnings("rawtypes")
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT') or hasRole('USER') or hasRole('BAILLEUR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER') or hasRole('USER') or hasRole('BUYER')")
     public ResponseEntity getUserById(@PathVariable("userId") UUID userId) {
 
         StatusResponse statusResponse = new StatusResponse();

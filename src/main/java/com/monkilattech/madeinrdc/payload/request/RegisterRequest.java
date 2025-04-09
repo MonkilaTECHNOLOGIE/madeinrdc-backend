@@ -1,5 +1,7 @@
 package com.monkilattech.madeinrdc.payload.request;
 
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +11,7 @@ public class RegisterRequest {
     private String name;
     private String email;
     private String password;
-    private String role; 
+    private Set<String> role;
     private String profil;
     private String phone;
     private Boolean status;
