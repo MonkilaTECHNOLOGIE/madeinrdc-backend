@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,9 +43,9 @@ import com.monkilatech.madeinrdc.services.UserService;
 import com.monkilatech.madeinrdc.utils.ValueException;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
-        @Autowired
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -66,7 +67,7 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
         @SuppressWarnings("rawtypes")
         StatusResponse statusResponse = new StatusResponse();

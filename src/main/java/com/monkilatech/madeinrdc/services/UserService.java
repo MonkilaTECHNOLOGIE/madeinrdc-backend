@@ -12,7 +12,7 @@ public interface UserService {
 
     User getUserById(UUID userId) throws Exception;
 
-    User getUserByPhone(String phone) throws Exception;
+    // User getUserByPhone(String phone) throws Exception;
 
     User updateUser(User user) throws Exception;
 

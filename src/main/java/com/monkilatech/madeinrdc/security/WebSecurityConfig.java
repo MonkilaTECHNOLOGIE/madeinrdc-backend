@@ -30,9 +30,11 @@ import java.util.List;
 public class WebSecurityConfig {
 
     private static final String[] PUBLIC_URLS = {
-        "/api/auth/**",
         "/actuator/**",
         "/api/auth/sendOtp",
+        "/api/auth/signin",
+        "/api/auth/signup",
+        "/api/auth/signout",
     };
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -88,7 +90,7 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("*")); // Ou précise les domaines ex: http://localhost:3000
+        configuration.setAllowedOrigins(List.of("*")); 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

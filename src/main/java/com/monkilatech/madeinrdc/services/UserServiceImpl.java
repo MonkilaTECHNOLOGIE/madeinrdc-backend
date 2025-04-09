@@ -35,10 +35,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId).get();
     }
 
-    @Override
-    public User getUserByPhone(String phone) throws Exception {
-        return userRepository.findByPhone(phone);
-    }
+    // @Override
+    // public User getUserByPhone(String phone) throws Exception {
+    //     return userRepository.findByPhone(phone);
+    // }
 
     @Override
     public Boolean deleteUserById(UUID userId) throws Exception {
