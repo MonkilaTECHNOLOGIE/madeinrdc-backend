@@ -37,6 +37,7 @@ import com.monkilatech.madeinrdc.repository.RoleRepository;
 import com.monkilatech.madeinrdc.repository.UserRepository;
 import com.monkilatech.madeinrdc.security.jwt.JwtUtils;
 import com.monkilatech.madeinrdc.security.services.UserDetailsImpl;
+import com.monkilatech.madeinrdc.services.OtpService;
 import com.monkilatech.madeinrdc.services.UserService;
 import com.monkilatech.madeinrdc.utils.ValueException;
 
@@ -57,6 +58,9 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    OtpService otpService;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -94,6 +98,9 @@ public class AuthController {
             statusResponse.setMessage(message);
             return ResponseEntity.badRequest().body(statusResponse);
         }
+
+        int otp = otpService.generateOTP(loginRequest.getUsername());
+        otpService.sendOtp(loginRequest.getUsername(), Integer.toString(otp));
 
         statusResponse.setStatus(200);
         statusResponse.setMessage("Authentification reussie");
