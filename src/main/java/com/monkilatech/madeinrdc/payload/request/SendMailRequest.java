@@ -8,5 +8,6 @@ import lombok.Setter;
 public class SendMailRequest {
     private String phone;
     private String email;
+    private String username;
     private int otpCode;
 }

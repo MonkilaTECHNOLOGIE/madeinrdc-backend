@@ -15,12 +15,15 @@ import org.springframework.stereotype.Service;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.monkilatech.madeinrdc.payload.request.SendMailRequest;
 
 @Service
 public class OtpService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    SendMailRequest sendMailRequest;
 
     private static final Integer EXPIRE_MINS = 60;
     private LoadingCache<String, Integer> otpCache;
@@ -58,59 +61,32 @@ public class OtpService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+    
             helper.setFrom("providermail30@gmail.com", "MadeInDRC");
             helper.setTo(toEmail);
             helper.setSubject("Code de vérification - MadeInDRC");
-
-            // Version HTML - structurée comme un objet
-            String htmlBody = """
-                                    <!DOCTYPE html>
-                                    <html><body style='font-family:Arial,sans-serif;'>
-                                        <p>Bonjour,</p>
-                                        <p>Voici les informations de votre demande de vérification :</p>
-                                        <pre style='background-color:#f5f5f5;padding:10px;border-radius:5px;border:1px solid #ccc;'>
-                    {
-                        "email": "%s",
-                        "otp": "%s",
-                        "validity": "10 minutes",
-                        "timestamp": "%s"
-                    }
-                                        </pre>
-                                        <p>Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer ce message.</p>
-                                        <hr>
-                                        <p style='font-size:12px;color:gray;'>MadeInDRC - Plateforme numérique de confiance</p>
-                                    </body></html>
-                                    """
-                    .formatted(toEmail, otp, java.time.LocalDateTime.now());
-
-            // Version texte brut
-            String plainText = """
-                    Bonjour,
-
-                    Voici les informations de votre code de vérification :
-
-                    {
-                        "email": "%s",
-                        "otp": "%s",
-                        "validity": "10 minutes",
-                        "timestamp": "%s"
-                    }
-
-                    Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer ce message.
-
-                    MadeInDRC - Plateforme numérique de confiance
-                    """.formatted(toEmail, otp, java.time.LocalDateTime.now());
-
-            helper.setText(htmlBody); 
-
+    
+            
+            String body = "<!DOCTYPE html>"
+                    + "<html><body style='font-family:Arial,sans-serif;'>"
+                    + "<p>Bonjour," + sendMailRequest.getUsername() + "</p>"
+                    + "<p>Vous avez demandé un code de vérification.</p>"
+                    + " <p>Voici votre code : <span style='font-size:20px; font-weight:bold; color:#2F80ED;'>" + otp + "</span></p>" 
+                    + "<p>Ce code est valable pendant <strong>10 minutes</strong>.</p>"
+                    + "<br><p>Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer ce message.</p>"
+                    + "<hr>"
+                    + "<p style='font-size:12px;color:gray;'>MadeInDRC - Plateforme numérique de confiance</p>"
+                    + "</body></html>";
+    
+            helper.setText(body, true);
+    
             message.addHeader("List-Unsubscribe", "<mailto:providermail30@gmail.com>");
-
+    
             mailSender.send(message);
-
+    
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-
+    
 }

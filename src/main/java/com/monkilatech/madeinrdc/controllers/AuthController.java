@@ -32,6 +32,7 @@ import com.monkilatech.madeinrdc.models.User;
 import com.monkilatech.madeinrdc.payload.request.CheckUserRequest;
 import com.monkilatech.madeinrdc.payload.request.LoginRequest;
 import com.monkilatech.madeinrdc.payload.request.RegisterRequest;
+import com.monkilatech.madeinrdc.payload.request.SendMailRequest;
 import com.monkilatech.madeinrdc.payload.response.StatusResponse;
 import com.monkilatech.madeinrdc.payload.response.UserInfoResponse;
 import com.monkilatech.madeinrdc.repository.RoleRepository;
@@ -65,6 +66,8 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    SendMailRequest sendMailRequest;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -102,6 +105,8 @@ public class AuthController {
 
         // int otp = otpService.generateOTP(loginRequest.getUsername());
         // otpService.sendOtp(loginRequest.getUsername(), Integer.toString(otp));
+
+        sendMailRequest.setUsername(userDetails.getUsername());
 
         statusResponse.setStatus(200);
         statusResponse.setMessage("Authentification reussie");
