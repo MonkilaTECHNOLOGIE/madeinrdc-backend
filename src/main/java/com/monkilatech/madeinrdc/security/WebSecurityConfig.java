@@ -28,10 +28,11 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
-
+    
     private static final String[] PUBLIC_URLS = {
         "/actuator/**",
         "/api/auth/sendOtp",
+        "/api/auth/verifyOtp",
         "/api/auth/signin",
         "/api/auth/signup",
         "/api/auth/signout",

@@ -15,15 +15,13 @@ import org.springframework.stereotype.Service;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.monkilatech.madeinrdc.payload.request.SendMailRequest;
+
 
 @Service
 public class OtpService {
 
     @Autowired
     private JavaMailSender mailSender;
-
-    SendMailRequest sendMailRequest;
 
     private static final Integer EXPIRE_MINS = 60;
     private LoadingCache<String, Integer> otpCache;
@@ -69,7 +67,7 @@ public class OtpService {
             
             String body = "<!DOCTYPE html>"
                     + "<html><body style='font-family:Arial,sans-serif;'>"
-                    + "<p>Bonjour," + sendMailRequest.getUsername() + "</p>"
+                    + "<p>Bonjour,</p>"
                     + "<p>Vous avez demandé un code de vérification.</p>"
                     + " <p>Voici votre code : <span style='font-size:20px; font-weight:bold; color:#2F80ED;'>" + otp + "</span></p>" 
                     + "<p>Ce code est valable pendant <strong>10 minutes</strong>.</p>"

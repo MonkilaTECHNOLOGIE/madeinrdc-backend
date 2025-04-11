@@ -29,11 +29,11 @@ public class OtpController {
     private static final String SEND_OTP_URL = "https://identitytoolkit.googleapis.com/v1/accounts:sendVerificationCode?key=" + FIREBASE_API_KEY;
     private static final String VERIFY_OTP_URL = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPhoneNumber?key=" + FIREBASE_API_KEY;
 
-    @PostMapping("/sendOtp")
-    public String sendOtp(@RequestParam String phoneNumber) {
+    @GetMapping("/sendOtp")
+    public String sendOtp(@RequestBody SendMailRequest sendMailRequest) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> request = new HashMap<>();
-        request.put("phoneNumber", phoneNumber);
+        request.put("phoneNumber", sendMailRequest.getPhone());
         // request.put("recaptchaToken", "YOUR_RECAPTCHA_TOKEN");  // Optionnel
 
         @SuppressWarnings("rawtypes")
@@ -41,12 +41,12 @@ public class OtpController {
         return response.getBody().get("sessionInfo").toString(); 
     }
 
-    @PostMapping("/verifyOtp")
-    public String verifyOtp(@RequestParam String sessionInfo, @RequestParam String otp) {
+    @GetMapping("/verifyOtp")
+    public String verifyOtp(@RequestBody SendMailRequest sendMailRequest) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> request = new HashMap<>();
-        request.put("sessionInfo", sessionInfo);
-        request.put("code", otp);
+        request.put("sessionInfo", sendMailRequest.getUsername());
+        request.put("code", Integer.toString(sendMailRequest.getOtpCode()));
 
         @SuppressWarnings("rawtypes")
         ResponseEntity<Map> response = restTemplate.postForEntity(VERIFY_OTP_URL, request, Map.class);

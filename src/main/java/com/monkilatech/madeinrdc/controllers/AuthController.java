@@ -106,8 +106,6 @@ public class AuthController {
         // int otp = otpService.generateOTP(loginRequest.getUsername());
         // otpService.sendOtp(loginRequest.getUsername(), Integer.toString(otp));
 
-        sendMailRequest.setUsername(userDetails.getUsername());
-
         statusResponse.setStatus(200);
         statusResponse.setMessage("Authentification reussie");
         statusResponse.setData(new UserInfoResponse(userDetails.getId(),
