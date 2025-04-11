@@ -17,11 +17,14 @@ public class SmsService {
     @Value("${twilio.phone_number}")
     private String fromPhone;
 
+    @Value("${twilio.sender.id}")
+    private String senderId;
+
     public void sendSms(String to, String body) {
         Twilio.init(accountSid, authToken);
         Message message = Message.creator(
                         new com.twilio.type.PhoneNumber(to),
-                        new com.twilio.type.PhoneNumber(fromPhone),
+                        new com.twilio.type.PhoneNumber(senderId),
                         body)
                 .create();
 
