@@ -32,12 +32,8 @@ public class WebSecurityConfig {
     private static final String[] PUBLIC_URLS = {
         "/actuator/**",
         "/api/auth/sendOtp",
-        "/api/auth/verifyOtp",
         "/api/auth/signin",
         "/api/auth/signup",
-        "/api/auth/signout",
-        "/api/auth/generateOtp",
-        "/api/auth/validateOtp",
     };
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -50,7 +46,7 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter(userDetailsService);
+        return new AuthTokenFilter();
     }
 
     @Bean

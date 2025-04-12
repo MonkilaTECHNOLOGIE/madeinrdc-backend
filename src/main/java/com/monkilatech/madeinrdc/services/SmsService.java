@@ -24,7 +24,7 @@ public class SmsService {
         Twilio.init(accountSid, authToken);
         Message message = Message.creator(
                         new com.twilio.type.PhoneNumber(to),
-                        new com.twilio.type.PhoneNumber(senderId),
+                        new com.twilio.type.PhoneNumber(fromPhone),
                         body)
                 .create();
 

@@ -20,6 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String auth) throws UsernameNotFoundException {
+
         User user;
 
         if (auth.contains("@")) {
@@ -37,12 +38,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 
-    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email:" + email));
+    // public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+    //     User user = userRepository.findByEmail(email)
+    //             .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email:" + email));
 
-        return UserDetailsImpl.build(user);
-    }
+    //     return UserDetailsImpl.build(user);
+    // }
 
     // public UserDetails loadUserByPhone(String phone) throws
     // UsernameNotFoundException {

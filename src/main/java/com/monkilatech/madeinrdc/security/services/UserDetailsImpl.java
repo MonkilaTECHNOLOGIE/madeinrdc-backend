@@ -15,6 +15,7 @@ import com.monkilatech.madeinrdc.models.User;
 
 
 public class UserDetailsImpl implements UserDetails {
+    
     private static final long serialVersionUID = 1L;
 
     private UUID id;
